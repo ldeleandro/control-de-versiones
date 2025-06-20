@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="author" content="Leandro Palacios Moriel" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendar Rutina - Leandro Palacios</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3ltfGVufDB8fDB8fHww');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .banner {
+      background-color: #003366; 
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .banner h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+
+    .banner .eslogan {
+      margin-top: 10px;
+      font-size: 1.2em;
+      font-weight: normal;
+    }
+
+    .formulario {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 60%;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.95); 
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+      width: 100%;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      padding: 8px;
+      margin-top: 5px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #00695c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #004d40;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 5px;
+      font-size: 0.9em;
+    }
+
+    .opciones_horizontal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 5px;
+    }
+
+    .opciones_horizontal label {
+      display: inline-flex;
+      width: auto;
+      margin-right: 15px;
+      align-items: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="banner">
+    <h1>Agenda tu Rutina Personalizada</h1>
+    <p class="eslogan">Completa el formulario para programar una sesión con nuestros entrenadores</p>
+  </div>
+
+  <div class="formulario">
+    <form id="rutinaForm" onsubmit="return validarFormulario();">
+      <label for="nombre">Nombre completo:
+        <input type="text" id="nombre" name="nombre" />
+      </label>
+
+      <label for="edad">Edad:
+        <input type="number" id="edad" name="edad" min="15" max="80" />
+      </label>
+
+      <label>Género:</label>
+      <div class="opciones_horizontal" id="contenedor_genero">
+        <label><input type="radio" name="genero" value="Masculino" /> Masculino</label>
+        <label><input type="radio" name="genero" value="Femenino" /> Femenino</label>
+      </div>
+
+      <label for="entrenador">Entrenador preferido:
+        <select id="entrenador" name="entrenador">
+          <option value="">Seleccione</option>
+          <option value="Andrea">Andrea Torres</option>
+          <option value="David">David Rodrígue</option>
+          <option value="Sofia">Sofía Martínez</option>
+          <option value="Caros">Carlos Gómez</option>
+          <option value="Valentina">Valentina Ruiz</option>
+          <option value="Juan">Juan Pérez</option>
+        </select>
+      </label>
+
+      <label>Días disponibles:</label>
+      <div class="opciones_horizontal" id="contenedor_dias">
+        <label><input type="checkbox" name="dias" value="Lunes" /> Lunes</label>
+        <label><input type="checkbox" name="dias" value="Martes" /> Martes</label>
+        <label><input type="checkbox" name="dias" value="Miércoles" /> Miércoles</label>
+        <label><input type="checkbox" name="dias" value="Jueves" /> Jueves</label>
+        <label><input type="checkbox" name="dias" value="Viernes" /> Viernes</label>
+        <label><input type="checkbox" name="dias" value="Sábado" /> Sábado</label>
+        <label><input type="checkbox" name="dias" value="Domingo" /> Domingo</label>
+      </div>
+
+      <label for="objetivo">Objetivo físico:
+        <textarea id="objetivo" name="objetivo" rows="3" cols="40"></textarea>
+      </label>
+
+      <label>Nivel de experiencia:</label>
+      <div class="opciones_horizontal" id="contenedor_experiencia">
+        <label><input type="radio" name="experiencia" value="Principiante" /> Principiante</label>
+        <label><input type="radio" name="experiencia" value="Intermedio" /> Intermedio</label>
+        <label><input type="radio" name="experiencia" value="Avanzado" /> Avanzado</label>
+      </div>
+
+      <div id="mensajesError" class="error"></div>
+
+      <button type="submit">Agendar</button>
+    </form>
+  </div>
+
+  <script>
+    function limpiarMensajes() {
+      const errores = document.querySelectorAll(".error_msg");
+      errores.forEach(error => error.remove());
+      document.getElementById("mensajesError").innerText = "";
+    }
+
+    function crearMensaje(elemento, mensaje) {
+      const span = document.createElement("span");
+      span.className = "error error_msg";
+      span.innerText = mensaje;
+      elemento.parentNode.appendChild(span);
+      elemento.focus();
+    }
+
+    function validarFormulario() {
+      limpiarMensajes();
+      let esValido = true;
+
+      const nombre = document.getElementById("nombre");
+      const edad = parseInt(document.getElementById("edad").value);
+      const entrenador = document.getElementById("entrenador");
+      const objetivo = document.getElementById("objetivo");
+      const genero = document.querySelector('input[name="genero"]:checked');
+      const dias = document.querySelectorAll('input[name="dias"]:checked');
+      const experiencia = document.querySelector('input[name="experiencia"]:checked');
+
+      if (nombre.value.trim() === "") {
+        crearMensaje(nombre, "Debe ingresar el nombre completo.");
+        esValido = false;
+      }
+
+      if (isNaN(edad) || edad < 15 || edad > 80) {
+        crearMensaje(document.getElementById("edad"), "La edad debe estar entre 15 y 80 años.");
+        esValido = false;
+      }
+
+      if (!genero) {
+        const contenedorGenero = document.getElementById("contenedor_genero");
+        crearMensaje(contenedorGenero, "Debe seleccionar un género.");
+        esValido = false;
+      }
+
+      if (entrenador.value === "") {
+        crearMensaje(entrenador, "Seleccione un entrenador.");
+        esValido = false;
+      }
+
+      if (dias.length === 0) {
+        const contenedorDias = document.getElementById("contenedor_dias");
+        crearMensaje(contenedorDias, "Debe seleccionar al menos un día disponible.");
+        esValido = false;
+      }
+
+      if (objetivo.value.trim() === "") {
+        crearMensaje(objetivo, "Describa su objetivo físico.");
+        esValido = false;
+      }
+
+      if (!experiencia) {
+        const contenedorExperiencia = document.getElementById("contenedor_experiencia");
+        crearMensaje(contenedorExperiencia, "Debe seleccionar su nivel de experiencia.");
+        esValido = false;
+      }
+
+      if (esValido) {
+        alert("Formulario enviado correctamente.");
+      }
+
+      return esValido;
+    }
+  </script>
+
+</body>
+</html>
